@@ -1,10 +1,7 @@
 (function (G, F) {
-	"object" == typeof exports && "object" == typeof module
-		? (module.exports = F())
-		: "function" == typeof define && define.amd
-		? define([], F)
-		: "object" == typeof exports
-		? (exports.SET = F())
+	"object" == typeof exports && "object" == typeof module ? (module.exports = F())
+		: "function" == typeof define && define.amd ? define([], F)
+		: "object" == typeof exports ? (exports.SET = F())
 		: (G.SET = F());
 })(window, function () {
 	/**
@@ -19,10 +16,7 @@
 	 * @returns {Element[]|NodeListOf<*>}
 	 */
 	Set.prototype.getElem = function (selector, all = false) {
-		const target =
-			arguments.length > 2 && arguments[2] !== undefined
-				? arguments[2]
-				: document;
+		const target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document;
 		return target.getElem(selector, all);
 	};
 	/**
@@ -32,49 +26,30 @@
 	 * @return {NodeList|Element[]|*[]|NodeListOf<*>|NodeListOf<Element>|*}
 	 */
 	EventTarget.prototype.getElem = function (selector, all = false) {
-		if (selector === window) return all ? [selector] : selector;
-		if (selector instanceof Element) return all ? [selector] : selector;
-		if (selector instanceof NodeList) return all ? selector : selector;
-		return all
-			? this.querySelectorAll(selector)
-			: this.querySelectorAll(selector)[0];
+		if (selector === window) return selector;
+		if (selector instanceof Element) return all ? Array.from(selector) : selector;
+		if (selector instanceof NodeList) return all ? Array.from(selector) : selector;
+		return all ? Array.from(this.querySelectorAll(selector)) : this.querySelectorAll(selector)[0];
 	};
 	/**
 	 * function for adding event listener to an element
 	 * @param {string} event
 	 * @param {*} handler
-	 * @param {boolean} capture
+	 * @param {object} options
 	 * @returns {void}
 	 */
-	EventTarget.prototype.on = function (event, handler, capture = null) {
-		return capture
-			? this.addEventListener(event, handler, capture)
-			: this.addEventListener(event, handler);
+	EventTarget.prototype.on = function (event, handler, options = null) {
+		return options ? this.addEventListener(event, handler, capture) : this.addEventListener(event, handler);
 	};
 	/**
 	 * function for removing event listener on an element
 	 * @param {string} event
 	 * @param {*} handler
+	 * @param {object} options
 	 * @returns {void}
 	 */
-	EventTarget.prototype.off = function (event, handler) {
-		return this.removeEventListener(event, handler);
-	};
-	/**
-	 * function to hide or display an element
-	 * @param selectorArray
-	 * @param actionArray
-	 * @returns {string}
-	 */
-	Set.prototype.visibility = function (selectorArray, actionArray) {
-		for (let _i = 0; _i < selectorArray.length; _i++) {
-			const target = this.getElem(selectorArray[_i]);
-			if (target !== undefined) {
-				actionArray[_i]
-					? (target.style.display = "block")
-					: (target.style.display = "none");
-			}
-		}
+	EventTarget.prototype.off = function (event, handler, options = null) {
+		return options ? this.removeEventListener(event, handler, options) : this.removeEventListener(event, handler);
 	};
 	/**
 	 * function to add/remove class -
@@ -90,23 +65,10 @@
 			let target = this.getElem(selectorArray[_i]);
 			if (target !== undefined) {
 				for (let i = 0; i < classArray[_i].length; i++) {
-					actionArray[_i]
-						? target.classList.add(classArray[_i][i])
-						: target.classList.remove(classArray[_i][i]);
+					actionArray[_i] ? target.classList.add(classArray[_i][i]) : target.classList.remove(classArray[_i][i]);
 				}
 			}
 		}
-	};
-	/**
-	 * function to calc device width
-	 * @returns {number}
-	 */
-	Set.prototype.checkDeviceWidth = function () {
-		return (
-			window.innerWidth ||
-			document.documentElement.clientWidth ||
-			document.body.clientWidth
-		);
 	};
 	/**
 	 * function to write style to an element
@@ -124,6 +86,17 @@
 				}
 			}
 		}
+	};
+	/**
+	 * function to calc device width
+	 * @returns {number}
+	 */
+	Set.prototype.checkDeviceWidth = function () {
+		return (
+			window.innerWidth ||
+			document.documentElement.clientWidth ||
+			document.body.clientWidth
+		);
 	};
 	/**
 	 * function to check device (ie. whether desktop/tablet/mobile)
@@ -202,7 +175,7 @@
 	/**
 	 * function to get parent element
 	 * @param parentClass
-	 * @returns {EventTarget}
+	 * @returns {Node}
 	 */
 	EventTarget.prototype.getParent = function (parentClass = null) {
 		let parent = this.parentElement;
@@ -217,24 +190,14 @@
 	 * @param type {String} | 'next' or 'prev'
 	 * @returns {Element}
 	 */
-	EventTarget.prototype.getSibling = function (
-		type = null,
-		siblingSelector = null
-	) {
+	EventTarget.prototype.getSibling = function (type = null, siblingSelector = null) {
 		if (type === "next" || type === null) {
 			if (siblingSelector)
-				return this.getParent().getElem(
-					this.classList.value
-						.split(" ")
-						.map((e) => `.${e}`)
-						.join()
-						.replace(/,/g, "") +
-						" + " +
-						siblingSelector
-				);
-			else return this.nextElementSibling;
+				return this.getParent().getElem(this.classList.value.split(" ").map((e) => `.${e}`).join().replace(/,/g, "") + " + " + siblingSelector);
+			return this.nextElementSibling;
 		}
-		if (type === "prev") return this.previousElementSibling;
+		if (type === "prev")
+			return this.previousElementSibling;
 	};
 	/**
 	 * function to remove element
@@ -256,7 +219,7 @@
 		cName,
 		cValue,
 		expDays = 30,
-		path = "/questionnaire"
+		path = "/"
 	) {
 		const cDate = new Date();
 		cDate.setTime(
@@ -316,12 +279,7 @@
 		// open req
 		xhr.open(
 			method,
-			cache
-				? url
-				: url +
-						(/\?/.test(url) ? "&" : "?") +
-						"_" +
-						Math.floor(Math.random() * 10e11)
+			cache ? url : url + (/\?/.test(url) ? "&" : "?") + "_" + Math.floor(Math.random() * 10e11)
 		);
 		// set req header
 		// NB: each header obj key and value will be used to set header
@@ -336,9 +294,9 @@
 		// exec send
 		try {
 			xhr.send(
-				body
-					? headers["Content-Type"] === "application/json; charset=UTF-8"
-						? JSON.stringify(body)
+				body ? 
+					headers["Content-Type"] === "application/json; charset=UTF-8" ?
+						JSON.stringify(body)
 						: body
 					: null
 			);

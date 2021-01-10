@@ -1,0 +1,11 @@
+{
+	"name": "set",
+	"version": "1.0.0",
+	"description": "",
+	"main": "set.js",
+	"scripts": {
+		"test": ""
+	},
+	"author": "sylvester ezenwata",
+	"license": "MIT"
+}
