@@ -4,6 +4,7 @@
 		: "object" == typeof exports ? (exports.SET = F())
 		: (G.SET = F());
 })(window, function () {
+	"use strict";
 	/**
 	 * Set constructor
 	 * @constructor
@@ -15,9 +16,9 @@
 	 * @param {boolean} all
 	 * @returns {Element[]|NodeListOf<*>}
 	 */
-	Set.prototype.getElem = function (selector, all = false) {
+	Set.prototype.$ = function (selector, all = false) {
 		const target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document;
-		return target.getElem(selector, all);
+		return target.$(selector, all);
 	};
 	/**
 	 * function to bind query select to element
@@ -25,11 +26,11 @@
 	 * @param all
 	 * @return {NodeList|Element[]|*[]|NodeListOf<*>|NodeListOf<Element>|*}
 	 */
-	EventTarget.prototype.getElem = function (selector, all = false) {
+	EventTarget.prototype.$ = function (selector, all = false) {
 		if (selector === window) return selector;
-		if (selector instanceof Element) return all ? Array.from(selector) : selector;
-		if (selector instanceof NodeList) return all ? Array.from(selector) : selector;
-		return all ? Array.from(this.querySelectorAll(selector)) : this.querySelectorAll(selector)[0];
+		if (selector instanceof Element) return all ? [selector] : selector;
+		if (selector instanceof NodeList) return all ? [selector] : selector;
+		return all ? [...this.querySelectorAll(selector)] : this.querySelectorAll(selector)[0];
 	};
 	/**
 	 * function for adding event listener to an element
@@ -39,7 +40,7 @@
 	 * @returns {void}
 	 */
 	EventTarget.prototype.on = function (event, handler, options = null) {
-		return options ? this.addEventListener(event, handler, capture) : this.addEventListener(event, handler);
+		return options ? this.addEventListener(event, handler, options) : this.addEventListener(event, handler);
 	};
 	/**
 	 * function for removing event listener on an element
@@ -62,7 +63,7 @@
 	 */
 	Set.prototype.fixClass = function (selectorArray, classArray, actionArray) {
 		for (let _i = 0; _i < selectorArray.length; _i++) {
-			let target = this.getElem(selectorArray[_i]);
+			let target = this.$(selectorArray[_i]);
 			if (target !== undefined) {
 				for (let i = 0; i < classArray[_i].length; i++) {
 					actionArray[_i] ? target.classList.add(classArray[_i][i]) : target.classList.remove(classArray[_i][i]);
@@ -78,7 +79,7 @@
 	 */
 	Set.prototype.fixStyle = function (selectorArray, propertyArray, valueArray) {
 		for (let _i = 0; _i < selectorArray.length; _i++) {
-			const target = this.getElem(selectorArray[_i]);
+			const target = this.$(selectorArray[_i]);
 			if (target !== undefined) {
 				for (let i = 0; i < valueArray[_i].length; i++) {
 					if (target.style.hasOwnProperty(propertyArray[_i][i]))
@@ -115,6 +116,35 @@
 			return "mobile";
 		}
 		return "desktop";
+	};
+	/**
+	 * function to check for browser type
+	 */
+	Set.prototype.browserType = function() {
+		if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
+        {
+            return('Opera');
+        }
+        else if(navigator.userAgent.indexOf("Chrome") != -1 )
+        {
+            return('Chrome');
+        }
+        else if(navigator.userAgent.indexOf("Safari") != -1)
+        {
+            return('Safari');
+        }
+        else if(navigator.userAgent.indexOf("Firefox") != -1 ) 
+        {
+            return('Firefox');
+        }
+        else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) //IF IE > 10
+        {
+            return('IE');
+        }  
+        else 
+        {
+            return('unknown');
+        }
 	};
 	/**
 	 * function to create tag
@@ -182,7 +212,7 @@
 		if (!parentClass) return parent;
 		while (!parent.classList.contains(parentClass)) {
 			parent = parent.parentElement;
-		}
+        }
 		return parent;
 	};
 	/**
@@ -193,7 +223,7 @@
 	EventTarget.prototype.getSibling = function (type = null, siblingSelector = null) {
 		if (type === "next" || type === null) {
 			if (siblingSelector)
-				return this.getParent().getElem(this.classList.value.split(" ").map((e) => `.${e}`).join().replace(/,/g, "") + " + " + siblingSelector);
+				return this.getParent().$(this.classList.value.split(" ").map((e) => `.${e}`).join().replace(/,/g, "") + " + " + siblingSelector);
 			return this.nextElementSibling;
 		}
 		if (type === "prev")
@@ -205,7 +235,7 @@
 	 * @param index | for a case where there are numerous target
 	 */
 	Set.prototype.removeElem = function (targetElement, index = 0) {
-		const target = this.getElem(targetElement, true)[index];
+		const target = this.$(targetElement, true)[index];
 		if (target) target.remove();
 	};
 	/**
@@ -267,10 +297,7 @@
 			handler = null,
 			withCredentials = true,
 			responseType = "json",
-			headers = {
-				"X-Requested-With": "XMLHttpRequest",
-				"Content-Type": "application/json; charset=UTF-8",
-			},
+			headers = {"X-Requested-With": "XMLHttpRequest","Content-Type": "application/json; charset=UTF-8"}
 		} = reqDataObj;
 		// defining XMLHttpRequest
 		const xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
@@ -282,11 +309,11 @@
 			cache ? url : url + (/\?/.test(url) ? "&" : "?") + "_" + Math.floor(Math.random() * 10e11)
 		);
 		// set req header
-		// NB: each header obj key and value will be used to set header
+		// NB: eachHeader obj key and value will be used to set header
 		let headersKeys = Object.keys(headers);
-		headersKeys.forEach((eachKey) => {
-			xhr.setRequestHeader(eachKey, headers[eachKey]);
-		});
+        headersKeys.map(eachKey => {
+            xhr.setRequestHeader(eachKey, headers[eachKey]);
+        });
 		// set response type
 		responseType && (xhr.responseType = responseType);
 		// set timeout
@@ -301,7 +328,9 @@
 					: null
 			);
 		} catch (error) {
-			console.error(error);
+            console.error(error);
+            if (handler)
+                return handler(null, { code: error.status, error: error.statusText });
 		}
 		// capture when loaded
 		xhr.onload = () => {
@@ -322,7 +351,7 @@
 		};
 	};
 	/**
-	 * function to bind objs dynamically
+	 * function to bind objs dynamically | like Object.assign()
 	 * @param {object|array} target
 	 * @param {object|array} data
 	 */
@@ -343,50 +372,13 @@
 	EventTarget.prototype.disableForm = function (...args) {
 		if (this.nodeName.toLowerCase() !== "form")
 			throw new Error("This function only works on a form.");
-		const formElements = this["elements"];
-		if (!formElements.length > 0) {
+		const formElements = this.elements;
+		if (formElements.length < 1)
 			return false;
-		}
 		// loop through formElements
-		[...formElements].forEach((eachElement) => {
+		Array.from(formElements).forEach((eachElement) => {
 			eachElement.disabled = !(arguments.length > 0 && arguments[0] === false);
 		});
-	};
-	/**
-	 * function to show top bar error
-	 * @param {string} message
-	 * @param {string} status
-	 */
-	Set.prototype.showResponse = function (message, status = "default") {
-		if (message) {
-			//create elements
-			let [divTags, pTags, spanTags] = this.createTag(
-				[2, 1, 1],
-				["div", "p", "span"]
-			);
-			this.addAttr(
-				[divTags, spanTags],
-				[
-					["notification", `notification-content ${status}`],
-					["SET.removeNotification()"],
-				],
-				[["class", "class"], ["onclick"]]
-			);
-			spanTags[0].innerHTML = "&times;";
-			pTags[0].innerHTML = message;
-			divTags[1].append(pTags[0]);
-			divTags[1].append(spanTags[0]);
-			divTags[0].append(divTags[1]);
-			// check if error exists
-			if (this.getElem(".notification")) this.removeElem(".notification");
-			document.body.append(divTags[0]);
-		}
-	};
-	/**
-	 * function to remove response notification
-	 */
-	Set.prototype.removeNotification = function () {
-		this.removeElem(".notification");
 	};
 	/**
 	 * function to val if an item exists in an array
@@ -395,9 +387,9 @@
 	 * @return {boolean|number}
 	 */
 	Set.prototype.existsInArray = function (value, array) {
-		var result = false;
+		let result = false;
 		if (Array.isArray(array) && array.length > 0) {
-			for (var i = 0; i < array.length; i++) {
+			for (let i = 0; i < array.length; i++) {
 				if (value === array[i]) {
 					result = i;
 					break;
@@ -414,11 +406,11 @@
 	 * @return boolean
 	 */
 	Set.prototype.existsInObj = function (targetArray, valueArray, obj) {
-		var result = 0;
+		let result = 0;
 		if ("object" === typeof obj) {
-			for (var _i = 0; _i < targetArray.length; _i++) {
-				var objKeys = Object.keys(obj);
-				for (var i = 0; i < objKeys.length; i++) {
+			for (let _i = 0; _i < targetArray.length; _i++) {
+				let objKeys = Object.keys(obj);
+				for (let i = 0; i < objKeys.length; i++) {
 					if (
 						objKeys[i] === targetArray[_i] &&
 						valueArray[_i] === obj[targetArray[_i]]
@@ -438,7 +430,7 @@
 	 */
 	Set.prototype.indexOfObj = function (target, value, arrayOfObj) {
 		if (Array.isArray(arrayOfObj) && arrayOfObj.length > 0) {
-			for (var i = 0; i < arrayOfObj.length; i++) {
+			for (let i = 0; i < arrayOfObj.length; i++) {
 				if (existsInObj([target], [value], arrayOfObj[i])) return i;
 			}
 		}
