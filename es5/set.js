@@ -1,52 +1,21 @@
-function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
-function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
-function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
-    for (var i = 0, arr2 = new Array(len); i < len; i++) {
-        arr2[i] = arr[i];
-    }
-    return arr2;
-}
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _typeof(obj) {
-    "@babel/helpers - typeof";
-    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-        _typeof = function _typeof(obj) {
-            return typeof obj;
-        };
-    } else {
-        _typeof = function _typeof(obj) {
-            return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-        };
-    }
-    return _typeof(obj);
-}
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return !!right[Symbol.hasInstance](left); } else { return left instanceof right; } }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 (function (G, F) {
-    "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) && "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) ? module.exports = F(): "function" == typeof define && define.amd ? define([], F) : "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) ? exports.SET = F() : G.SET = F();
+    "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) && "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) ? module.exports = F() : "function" == typeof define && define.amd ? define([], F) : "object" == (typeof exports === "undefined" ? "undefined" : _typeof(exports)) ? exports.SET = F() : G.SET = F();
 })(window, function () {
     "use strict";
     /**
@@ -66,7 +35,7 @@ function _typeof(obj) {
     Set.prototype.$ = function (selector) {
         var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
         var target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document;
-        return target.$(selector, all);
+        return target.getElem(selector, all);
     };
     /**
      * function to bind query select to element
@@ -76,11 +45,11 @@ function _typeof(obj) {
      */
 
 
-    EventTarget.prototype.$ = function (selector) {
+    EventTarget.prototype.getElem = function (selector) {
         var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
         if (selector === window) return selector;
-        if (selector instanceof Element) return all ? [selector] : selector;
-        if (selector instanceof NodeList) return all ? [selector] : selector;
+        if (_instanceof(selector, Element)) return all ? [selector] : selector;
+        if (_instanceof(selector, NodeList)) return all ? [selector] : selector;
         return all ? _toConsumableArray(this.querySelectorAll(selector)) : this.querySelectorAll(selector)[0];
     };
     /**
@@ -298,7 +267,7 @@ function _typeof(obj) {
         var siblingSelector = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
         if (type === "next" || type === null) {
-            if (siblingSelector) return this.getParent().$(this.classList.value.split(" ").map(function (e) {
+            if (siblingSelector) return this.getParent().getElem(this.classList.value.split(" ").map(function (e) {
                 return ".".concat(e);
             }).join().replace(/,/g, "") + " + " + siblingSelector);
             return this.nextElementSibling;
@@ -429,8 +398,7 @@ function _typeof(obj) {
                 if (status !== 200 || status < 200 || status > 200) handler(response, {
                     code: status,
                     error: statusText
-                });
-                else handler(response, null);
+                });else handler(response, null);
             } else return response;
         }; // capture error
 
@@ -447,7 +415,7 @@ function _typeof(obj) {
 
 
     Set.prototype.extend = function (target, data) {
-        if (!Array.isArray(target) && "object" === _typeof(target))(target = [target]) && (data = [data]);
+        if (!Array.isArray(target) && "object" === _typeof(target)) (target = [target]) && (data = [data]);
 
         var _loop = function _loop(_i) {
             var eachDataKeys = Object.keys(data[_i]);
@@ -545,6 +513,22 @@ function _typeof(obj) {
         }
 
         return null;
+    };
+    /**
+     * function to set or get attribute value
+     * @param {string} attr element's attr
+     * @param {*} attrValue if passed, the function performs a setAttribute, otherwise getAttribute
+     */
+
+
+    EventTarget.prototype.attr = function (attr) {
+        var attrValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+        if (attrValue) {
+            return this.setAttribute(attr, attrValue);
+        }
+
+        return this.getAttribute(attr);
     }; // instantiate constructor
 
 

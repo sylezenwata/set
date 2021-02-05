@@ -1,8 +1,8 @@
 (function (G, F) {
-	"object" == typeof exports && "object" == typeof module ? (module.exports = F())
-		: "function" == typeof define && define.amd ? define([], F)
-		: "object" == typeof exports ? (exports.SET = F())
-		: (G.SET = F());
+	"object" == typeof exports && "object" == typeof module ? (module.exports = F()) :
+		"function" == typeof define && define.amd ? define([], F) :
+		"object" == typeof exports ? (exports.SET = F()) :
+		(G.SET = F());
 })(window, function () {
 	"use strict";
 	/**
@@ -18,7 +18,7 @@
 	 */
 	Set.prototype.$ = function (selector, all = false) {
 		const target = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : document;
-		return target.$(selector, all);
+		return target.getElem(selector, all);
 	};
 	/**
 	 * function to bind query select to element
@@ -26,7 +26,7 @@
 	 * @param all
 	 * @return {NodeList|Element[]|*[]|NodeListOf<*>|NodeListOf<Element>|*}
 	 */
-	EventTarget.prototype.$ = function (selector, all = false) {
+	EventTarget.prototype.getElem = function (selector, all = false) {
 		if (selector === window) return selector;
 		if (selector instanceof Element) return all ? [selector] : selector;
 		if (selector instanceof NodeList) return all ? [selector] : selector;
@@ -120,31 +120,21 @@
 	/**
 	 * function to check for browser type
 	 */
-	Set.prototype.browserType = function() {
-		if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
-        {
-            return('Opera');
-        }
-        else if(navigator.userAgent.indexOf("Chrome") != -1 )
-        {
-            return('Chrome');
-        }
-        else if(navigator.userAgent.indexOf("Safari") != -1)
-        {
-            return('Safari');
-        }
-        else if(navigator.userAgent.indexOf("Firefox") != -1 ) 
-        {
-            return('Firefox');
-        }
-        else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) //IF IE > 10
-        {
-            return('IE');
-        }  
-        else 
-        {
-            return('unknown');
-        }
+	Set.prototype.browserType = function () {
+		if ((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1) {
+			return ('Opera');
+		} else if (navigator.userAgent.indexOf("Chrome") != -1) {
+			return ('Chrome');
+		} else if (navigator.userAgent.indexOf("Safari") != -1) {
+			return ('Safari');
+		} else if (navigator.userAgent.indexOf("Firefox") != -1) {
+			return ('Firefox');
+		} else if ((navigator.userAgent.indexOf("MSIE") != -1) || (!!document.documentMode == true)) //IF IE > 10
+		{
+			return ('IE');
+		} else {
+			return ('unknown');
+		}
 	};
 	/**
 	 * function to create tag
@@ -212,7 +202,7 @@
 		if (!parentClass) return parent;
 		while (!parent.classList.contains(parentClass)) {
 			parent = parent.parentElement;
-        }
+		}
 		return parent;
 	};
 	/**
@@ -223,7 +213,7 @@
 	EventTarget.prototype.getSibling = function (type = null, siblingSelector = null) {
 		if (type === "next" || type === null) {
 			if (siblingSelector)
-				return this.getParent().$(this.classList.value.split(" ").map((e) => `.${e}`).join().replace(/,/g, "") + " + " + siblingSelector);
+				return this.getParent().getElem(this.classList.value.split(" ").map((e) => `.${e}`).join().replace(/,/g, "") + " + " + siblingSelector);
 			return this.nextElementSibling;
 		}
 		if (type === "prev")
@@ -297,7 +287,10 @@
 			handler = null,
 			withCredentials = true,
 			responseType = "json",
-			headers = {"X-Requested-With": "XMLHttpRequest","Content-Type": "application/json; charset=UTF-8"}
+			headers = {
+				"X-Requested-With": "XMLHttpRequest",
+				"Content-Type": "application/json; charset=UTF-8"
+			}
 		} = reqDataObj;
 		// defining XMLHttpRequest
 		const xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
@@ -311,9 +304,9 @@
 		// set req header
 		// NB: eachHeader obj key and value will be used to set header
 		let headersKeys = Object.keys(headers);
-        headersKeys.map(eachKey => {
-            xhr.setRequestHeader(eachKey, headers[eachKey]);
-        });
+		headersKeys.map(eachKey => {
+			xhr.setRequestHeader(eachKey, headers[eachKey]);
+		});
 		// set response type
 		responseType && (xhr.responseType = responseType);
 		// set timeout
@@ -321,27 +314,37 @@
 		// exec send
 		try {
 			xhr.send(
-				body ? 
-					headers["Content-Type"] === "application/json; charset=UTF-8" ?
-						JSON.stringify(body)
-						: body
-					: null
+				body ?
+				headers["Content-Type"] === "application/json; charset=UTF-8" ?
+				JSON.stringify(body) :
+				body :
+				null
 			);
 		} catch (error) {
-            console.error(error);
-            if (handler)
-                return handler(null, { code: error.status, error: error.statusText });
+			console.error(error);
+			if (handler)
+				return handler(null, {
+					code: error.status,
+					error: error.statusText
+				});
 		}
 		// capture when loaded
 		xhr.onload = () => {
 			// request status
-			const { status, statusText, response } = xhr;
+			const {
+				status,
+				statusText,
+				response
+			} = xhr;
 			if (status !== 200 || status < 200 || status > 200)
 				console.error(`${status}: ${statusText}`);
 			// handler
 			if (handler)
 				if (status !== 200 || status < 200 || status > 200)
-					handler(response, { code: status, error: statusText });
+					handler(response, {
+						code: status,
+						error: statusText
+					});
 				else handler(response, null);
 			else return response;
 		};
@@ -435,6 +438,17 @@
 			}
 		}
 		return null;
+	};
+	/**
+	 * function to set or get attribute value
+	 * @param {string} attr element's attr
+	 * @param {*} attrValue if passed, the function performs a setAttribute, otherwise getAttribute
+	 */
+	EventTarget.prototype.attr = function (attr, attrValue = null) {
+		if (attrValue) {
+			return this.setAttribute(attr, attrValue);
+		}
+		return this.getAttribute(attr);
 	};
 	// instantiate constructor
 	return new Set();
