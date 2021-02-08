@@ -1,2 +1,2 @@
 # Set
-Basic dom manipulation scripts.
+Set is a light weight basic dom manipulation library.
