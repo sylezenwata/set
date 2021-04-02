@@ -68,7 +68,7 @@ const E = {
 		const formElements = this.elements;
 		if (formElements.length < 1) return false;
 		// loop through formElements
-		Array.from(formElements).forEach((eachElement) => {
+		[...formElements].forEach((eachElement) => {
 			eachElement.disabled = !(
 				arguments.length > 0 && arguments[0] === false
 			);
