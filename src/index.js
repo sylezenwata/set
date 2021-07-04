@@ -1,3 +1,10 @@
+/**
+ * SET.js 1.2.0
+ * MIT License
+ * Copyright (c) 2021 sylvester ezenwata
+ * https://github.com/sylezenwata/Set.git
+ */
+
 "use strict";
 /**
  * Functions to be bounded to Element constructor
