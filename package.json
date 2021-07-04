@@ -2,10 +2,21 @@
 	"name": "set",
 	"version": "1.2.0",
 	"description": "",
-	"main": "set.js",
+	"main": "src/index.js",
 	"scripts": {
-		"test": ""
+		"build": "webpack"
 	},
 	"author": "sylvester ezenwata",
-	"license": "MIT"
+	"license": "MIT",
+	"devDependencies": {
+		"@babel/core": "^7.13.10",
+		"@babel/plugin-transform-runtime": "^7.13.10",
+		"@babel/preset-env": "^7.13.10",
+		"@babel/runtime": "^7.13.10",
+		"babel-loader": "^8.2.2",
+		"uglifyjs-webpack-plugin": "^2.2.0",
+		"url-loader": "^4.1.1",
+		"webpack": "^5.27.1",
+		"webpack-cli": "^4.5.0"
+	}
 }

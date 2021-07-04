@@ -1,3 +1,7 @@
+"use strict";
+/**
+ * Functions to be bounded to Element constructor
+ */
 const E = {
 	/**
 	 * function to append element
@@ -27,7 +31,7 @@ const E = {
 	getParent(parentClass = null) {
 		let parent = this.parentElement;
 		if (!parentClass) return parent;
-		if (!Set.prototype.$.call("." + parentClass))
+		if (!Set.prototype.$.call(Set,"." + parentClass))
 			throw new Error(
 				`There is no element with this "${parentClass}" class name.`
 			);
@@ -80,12 +84,26 @@ const E = {
 	 * @param {*} attrValue if passed, the function performs a setAttribute, otherwise getAttribute
 	 */
 	attr(attr, attrValue = null) {
+		if (attrValue === true) {
+			return this[attr] = attrValue; 
+		}
 		if (attrValue) {
 			return this.setAttribute(attr, attrValue);
 		}
+		if (attrValue === false) {
+			return this.removeAttribute(attr);
+		}
 		return this.getAttribute(attr);
 	},
+	html(data = null) {
+		if (data)
+			return this.innerHTML = data;
+		return this.innerHTML = '';
+	}
 };
+/**
+ * Functions to be bouded to EventTarget Constructor
+ */
 const ET = {
 	/**
 	 * function to bind query select to element
@@ -292,7 +310,7 @@ class Set {
 			.replace(/>/, "");
 		// get tag name
 		let elemTag = elem.split(" ")[0];
-		elem = elem.match(/\s+[a-zA-Z0-9-]+="[a-zA-Z0-9-\s]+"/g);
+		elem = elem.match(/\s+[a-zA-Z0-9-]+="[a-zA-Z0-9-_:\(\)\/\s;]+"/g);
 		if (elem) {
 			elem = elem.map((e) => e.trim());
 		}
@@ -303,7 +321,7 @@ class Set {
 		// set properties to newNode
 		if (elem) {
 			elem.forEach((e) => {
-				let [name, value] = e.replaceAll('"', "").split("=");
+				let [name, value] = e.replace(/\"/g, "").split("=");
 				newNode.attr(name, value);
 			});
 		}
@@ -360,25 +378,31 @@ class Set {
 		if (this.gCookie(cName)) document.cookie = cName + "=" + cValue;
 	}
 	/**
-	 * function to run ajax request
-	 * @param reqDataObj - {url,method,timeOut,cache = false,body = null,handler = null,withCredentials = true,responseType = 'json',headers = {'X-Requested-With': 'XMLHttpRequest','Content-Type': 'application/json; charset=UTF-8'}}
+	 * function to perform ajax request
+	 * @param {Object} - {
+	 * 	method,
+	 * 	url,
+	 * 	timeOut,
+	 * 	cache = false,
+	 * 	body = null,
+	 * 	handler = null,
+	 * 	withCredentials = true,
+	 * 	responseType = 'json',
+	 * 	headers = {'X-Requested-With': 'XMLHttpRequest','Content-Type': 'application/json; charset=UTF-8'}
+	 * }
+	 * @returns Object|function
 	 */
-	ajax(reqDataObj) {
-		// defining request data
-		let {
-			url,
-			method,
-			timeOut,
-			cache = false,
-			body = null,
-			handler = null,
-			withCredentials = true,
-			responseType = "json",
-			headers = {
-				"X-Requested-With": "XMLHttpRequest",
-				"Content-Type": "application/json; charset=UTF-8",
-			},
-		} = reqDataObj;
+	ajax({
+		method,
+		url,
+		timeOut,
+		cache = false,
+		body = null,
+		handler = null,
+		withCredentials = true,
+		responseType = "json",
+		headers = null,
+	}) {
 		// defining XMLHttpRequest
 		// const xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP");
 		const xhr = new XMLHttpRequest();
@@ -396,10 +420,29 @@ class Set {
 		);
 		// set req header
 		// NB: eachHeader obj key and value will be used to set header
+		if (headers) {
+			headers = Object.assign(
+				{
+					"X-Requested-With": "XMLHttpRequest",
+					"Content-Type": "application/json; charset=UTF-8",
+					"Accept": "application/json; charset=UTF-8"
+				},
+				headers
+			);
+		} else {
+			headers = {
+				"X-Requested-With": "XMLHttpRequest",
+				"Content-Type": "application/json; charset=UTF-8",
+				"Accept": "application/json; charset=UTF-8"
+			}
+		}
 		let headersKeys = Object.keys(headers);
-		headersKeys.map((eachKey) =>
-			xhr.setRequestHeader(eachKey, headers[eachKey])
-		);
+		for (let eachKey of headersKeys) {
+			if (!headers[eachKey]) {
+				continue;
+			}
+			xhr.setRequestHeader(eachKey, headers[eachKey]);
+		}
 		// set response type
 		responseType && (xhr.responseType = responseType);
 		// set timeout
@@ -442,24 +485,9 @@ class Set {
 			console.error(error);
 			if (handler)
 				return handler(null, {
-					msg: "Request was not sent due to error.",
+					msg: "Request was not sent, this is a technical error.",
 				});
 		};
-	}
-	/**
-	 * function to bind objs dynamically | like Object.assign()
-	 * @param {object|array} target
-	 * @param {object|array} data
-	 */
-	extend(target, data) {
-		if (!Array.isArray(target) && "object" === typeof target)
-			(target = [target]) && (data = [data]);
-		for (let _i = 0; _i < target.length; _i++) {
-			let eachDataKeys = Object.keys(data[_i]);
-			eachDataKeys.forEach((eachKey) => {
-				target[_i][eachKey] = data[_i][eachKey];
-			});
-		}
 	}
 	/**
 	 * function to val if an item exists in an array
@@ -517,7 +545,15 @@ class Set {
 		}
 		return null;
 	}
+	/**
+	 * 
+	 * @param {String} url Url to format
+	 * @param {String} params Url parameters to be bounded to main url
+	 * @returns {String}
+	 */
+	formatUrlParam(url,params) {
+		return /\?/.test(url) ? `${url}&${params}` : `${url}?${params}`;
+	}
 }
 // instantiate Set and export as SET
-const SET = new Set();
-export default SET;
+export default new Set();
