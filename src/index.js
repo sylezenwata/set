@@ -326,7 +326,8 @@ class Set {
 			});
 		}
 		// set node in newNode
-		return newNode.html(node);
+		newNode.html(node);
+		return newNode;
 	}
 	/**
 	 * function to remove element
