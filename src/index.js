@@ -70,7 +70,8 @@ const E = {
 	},
 	/**
 	 * function to disable form
-	 * @return {boolean}
+	 * @param  {...any} args if false is passed, form elements is enabled
+	 * @returns 
 	 */
 	disableForm(...args) {
 		if (this.nodeName.toLowerCase() !== "form") {
