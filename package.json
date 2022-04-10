@@ -2,7 +2,7 @@
 	"name": "set",
 	"version": "1.2.0",
 	"description": "",
-	"main": "src/index.js",
+	"main": "src/set.js",
 	"scripts": {
 		"build": "webpack"
 	},

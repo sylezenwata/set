@@ -1,5 +1,6 @@
 module.exports = {
     mode: "production",
+    entry: `${__dirname}/src/set.js`,
     output: {
         path: `${__dirname}/dist`,
         library: 'set',

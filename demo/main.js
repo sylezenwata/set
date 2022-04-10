@@ -1,4 +1,4 @@
-import { set as $ } from '../src/index.js';
+import { set as $ } from '../src/set.js';
 
 $(document).ready(() => {
   $('body').prepend(`<button>Load data</button>`)
@@ -21,7 +21,7 @@ $(document).ready(() => {
       e => console.log(e)
     )
     .finally(() => {
-      $('button').off('click', ex)
+      $('button').off('clcick', ex)
     })
   }
   $('button').on('click', ex);
