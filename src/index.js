@@ -1,9 +1,9 @@
 /**
- * Set.js 2.0.1
+ * set.js 2.0.1
  * MIT License
  * Copyright (c) 2021 sylvester ezenwata
- * https://github.com/sylezenwata/Set.git
- * - Inspired by WebDevSimplified/JqueryClone
+ * https://github.com/sylezenwata/set.git
+ * - Inspired by https://github.com/WebDevSimplified/jquery-clone.git
  */
 
 "use strict";
@@ -275,11 +275,11 @@ class ElementCollection extends Array {
 }
 
 /**
- * Set function constructor
+ * set function constructor
  * @param {String|NodeList|Array} param
  * @returns {Array}
  */
-function Set(param) {
+function set(param) {
 	if (typeof param === "string" || param instanceof String) {
 		return new ElementCollection(...document.querySelectorAll(param));
 	} else {
@@ -291,7 +291,7 @@ function Set(param) {
  * function to calc device width
  * @returns {number}
  */
-Set.checkDeviceWidth = function () {
+set.checkDeviceWidth = function () {
 	return (
 		window.innerWidth ||
 		document.documentElement.clientWidth ||
@@ -303,7 +303,7 @@ Set.checkDeviceWidth = function () {
  * function to check device (ie. whether desktop/tablet/mobile)
  * @returns {string}
  */
-Set.deviceType = function () {
+set.deviceType = function () {
 	const userAgent = navigator.userAgent || navigator.vendor;
 	if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
 		return "tablet";
@@ -321,7 +321,7 @@ Set.deviceType = function () {
 /**
  * function to check for browser type
  */
-Set.browserType = function () {
+set.browserType = function () {
 	if (
 		(navigator.userAgent.indexOf("Opera") ||
 			navigator.userAgent.indexOf("OPR")) !== -1
@@ -350,7 +350,7 @@ Set.browserType = function () {
  * @param expDays
  * @param path
  */
-Set.setCookie = function (cName, cValue, expDays = 30, path = "/") {
+set.setCookie = function (cName, cValue, expDays = 30, path = "/") {
 	const cDate = new Date();
 	cDate.setTime(
 		cDate.getTime() + (expDays ? expDays : 0) * 24 * 60 * 60 * 1000
@@ -364,7 +364,7 @@ Set.setCookie = function (cName, cValue, expDays = 30, path = "/") {
  * @param cName
  * @returns {string}
  */
-Set.getCookie = function (cName) {
+set.getCookie = function (cName) {
 	let decodedC, splitC, eachCname, eachCvalue;
 	decodedC = decodeURIComponent(document.cookie);
 	splitC = decodedC.split(";");
@@ -381,7 +381,7 @@ Set.getCookie = function (cName) {
  * @param cName
  * @param cValue
  */
-Set.updateCookie = function (cName, cValue) {
+set.updateCookie = function (cName, cValue) {
 	if (this.gCookie(cName)) document.cookie = cName + "=" + cValue;
 };
 
@@ -390,7 +390,7 @@ Set.updateCookie = function (cName, cValue) {
  * @param {Object} param0
  * @returns {Function}
  */
-Set.ajax = function ({
+set.ajax = function ({
 	url,
 	method,
 	timeOut,
@@ -478,4 +478,4 @@ Set.ajax = function ({
 	});
 };
 
-export default Set;
+export { set };
