@@ -35,16 +35,17 @@ class ElementCollection extends Array {
 	 * @param {String} event
 	 * @param {String|Function} cbOrSelector
 	 * @param {Function} cb
+	 * @param {Object} option 
 	 * @returns {Array}
 	 */
-	on(event, cbOrSelector, cb) {
+	on(event, cbOrSelector, cb, option) {
 		if (typeof cbOrSelector === "function") {
-			this.forEach((e) => e.addEventListener(event, cbOrSelector));
+			this.forEach((e) => e.addEventListener(event, cbOrSelector, option));
 		} else {
 			this.forEach((elem) => {
 				elem.addEventListener(event, (e) => {
 					if (e.target.matches(cbOrSelector)) cb(e);
-				});
+				}, option);
 			});
 		}
 		return this;
@@ -53,19 +54,13 @@ class ElementCollection extends Array {
 	/**
 	 * function to remove bounded event from an element
 	 * @param {String} event
-	 * @param {String|Function} cbOrSelector
 	 * @param {Function} cb
+	 * @param {Object} option
 	 * @returns {Array}
 	 */
-	off(event, cbOrSelector, cb) {
-		if (typeof cbOrSelector === "function") {
-			this.forEach((e) => e.removeEventListener(event, cbOrSelector));
-		} else {
-			this.forEach((elem) => {
-				elem.removeEventListener(event, (e) => {
-					if (e.target.matches(cbOrSelector)) cb(e);
-				});
-			});
+	off(event, cb, option) {
+		if (typeof cb === "function") {
+			this.forEach((e) => e.removeEventListener(event, cb, option));
 		}
 		return this;
 	}
@@ -90,7 +85,22 @@ class ElementCollection extends Array {
 	 * function to get targeted element parent
 	 * @returns {Array}
 	 */
-	parent() {
+	parent(selector) {
+		if (selector) {
+			return this.map((e) => {
+				if (
+					document.querySelector(selector) &&
+					document.querySelector(selector).querySelector(e.nodeName)
+				) {
+					let parent = e.parentElement;
+					while (!parent.matches(selector)) {
+						parent = parent.parentElement;
+					}
+					return parent;
+				}
+				return null;
+			}).filter((e) => e != null);
+		}
 		return this.map((e) => e.parentElement).filter((e) => e != null);
 	}
 
