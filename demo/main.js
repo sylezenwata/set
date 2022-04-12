@@ -1,4 +1,4 @@
-import { set as $ } from '../src/set.js';
+import { set as $ } from '../dist/set.min.js';
 
 $(document).ready(() => {
   $('body').prepend(`<button>Load data</button>`)

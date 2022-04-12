@@ -1,12 +1,14 @@
 module.exports = {
     mode: "production",
-    entry: `${__dirname}/src/set.js`,
+    entry: `${__dirname}/src/index.js`,
     output: {
         path: `${__dirname}/dist`,
-        library: 'set',
-        libraryTarget: 'umd',
         filename: 'set.min.js',
-        auxiliaryComment: 'Test Comment',
+        library: {
+            name: 'set',
+            type: 'umd',
+        },
+        // auxiliaryComment: 'Test Comment',
         environment: {
 			arrowFunction: false
 		},
