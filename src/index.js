@@ -35,7 +35,7 @@ class ElementCollection extends Array {
 	 * @param {String} event
 	 * @param {String|Function} cbOrSelector
 	 * @param {Function} cb
-	 * @param {Object} option 
+	 * @param {Object} option
 	 * @returns {Array}
 	 */
 	on(event, cbOrSelector, cb, option) {
@@ -43,9 +43,13 @@ class ElementCollection extends Array {
 			this.forEach((e) => e.addEventListener(event, cbOrSelector, option));
 		} else {
 			this.forEach((elem) => {
-				elem.addEventListener(event, (e) => {
-					if (e.target.matches(cbOrSelector)) cb(e);
-				}, option);
+				elem.addEventListener(
+					event,
+					(e) => {
+						if (e.target.matches(cbOrSelector)) cb(e);
+					},
+					option
+				);
 			});
 		}
 		return this;
@@ -181,26 +185,31 @@ class ElementCollection extends Array {
 	}
 
 	/**
-	 * function to get or add data attribute	
-	 * @param {String} name 
-	 * @param {String} value 
+	 * function to get or add data attribute
+	 * @param {String} name
+	 * @param {String} value
 	 * @returns {Array}
 	 */
 	data(name, value) {
 		try {
-			const { groups: { dataname } } = /^(data)?(-)?(?<dataname>.+)$/.exec(name)
-			name = name.split('-').map((e, i) => (i > 0 ? e.slice(0, 1).toUpperCase() + e.slice(1) : e)).join('');
+			const {
+				groups: { dataname },
+			} = /^(data)?(-)?(?<dataname>.+)$/.exec(name);
+			name = name
+				.split("-")
+				.map((e, i) => (i > 0 ? e.slice(0, 1).toUpperCase() + e.slice(1) : e))
+				.join("");
 		} catch (error) {
-			if (error.name.toLowerCase() === 'typeerror') {
-				console.error('you did not pass a valid data name');
+			if (error.name.toLowerCase() === "typeerror") {
+				console.error("you did not pass a valid data name");
 			}
 			console.error(error);
 			return this;
 		}
 		if (!value && typeof value !== "string") {
-			return this.map(e => e.dataset[name]).filter(e => e != null);
+			return this.map((e) => e.dataset[name]).filter((e) => e != null);
 		}
-		this.forEach(e => (e.dataset[name] = value));
+		this.forEach((e) => (e.dataset[name] = value));
 		return this;
 	}
 
@@ -211,9 +220,9 @@ class ElementCollection extends Array {
 	 */
 	html(data) {
 		if (data === null) {
-			return this.map(e => e.innerHTML).filter(e => e != null);
+			return this.map((e) => e.innerHTML).filter((e) => e != null);
 		}
-		this.forEach(e => (e.innerHTML = data));
+		this.forEach((e) => (e.innerHTML = data));
 		return this;
 	}
 
@@ -224,9 +233,9 @@ class ElementCollection extends Array {
 	 */
 	text(data) {
 		if (data === null) {
-			return this.map(e => e.textContent).filter(e => e != null);
+			return this.map((e) => e.textContent).filter((e) => e != null);
 		}
-		this.forEach(e => (e.textContent = data));
+		this.forEach((e) => (e.textContent = data));
 		return this;
 	}
 
@@ -305,6 +314,13 @@ class ElementCollection extends Array {
 					eachElement.disabled = enable ? false : true;
 				});
 			}
+		});
+		return this;
+	}
+
+	remove(selector) {
+		this.forEach((e) => {
+			e.querySelectorAll(selector).forEach((i) => i && i.remove());
 		});
 		return this;
 	}
