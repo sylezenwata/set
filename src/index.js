@@ -181,14 +181,39 @@ class ElementCollection extends Array {
 	}
 
 	/**
+	 * function to get or add data attribute	
+	 * @param {String} name 
+	 * @param {String} value 
+	 * @returns {Array}
+	 */
+	data(name, value) {
+		try {
+			const { groups: { dataname } } = /^(data)?(-)?(?<dataname>.+)$/.exec(name)
+			name = name.split('-').map((e, i) => (i > 0 ? e.slice(0, 1).toUpperCase() + e.slice(1) : e)).join('');
+		} catch (error) {
+			if (error.name.toLowerCase() === 'typeerror') {
+				console.error('you did not pass a valid data name');
+			}
+			console.error(error);
+			return this;
+		}
+		if (!value && typeof value !== "string") {
+			return this.map(e => e.dataset[name]).filter(e => e != null);
+		}
+		this.forEach(e => (e.dataset[name] = value));
+		return this;
+	}
+
+	/**
 	 * function to add, remove or get innerHTML content
 	 * @param {*} data
 	 * @returns {Array}
 	 */
 	html(data) {
-		this.forEach((e) =>
-			data != null ? (e.innerHTML = data) : (e.innerHTML = "")
-		);
+		if (data === null) {
+			return this.map(e => e.innerHTML).filter(e => e != null);
+		}
+		this.forEach(e => (e.innerHTML = data));
 		return this;
 	}
 
@@ -198,9 +223,10 @@ class ElementCollection extends Array {
 	 * @returns {Array}
 	 */
 	text(data) {
-		this.forEach((e) =>
-			data != null ? (e.textContent = data) : (e.textContent = "")
-		);
+		if (data === null) {
+			return this.map(e => e.textContent).filter(e => e != null);
+		}
+		this.forEach(e => (e.textContent = data));
 		return this;
 	}
 
