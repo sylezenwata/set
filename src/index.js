@@ -253,7 +253,7 @@ class ElementCollection extends Array {
 
 		// get tag name
 		let elemTag = elem.split(" ")[0];
-		elem = elem.match(/\s+[a-zA-Z0-9-]+="[a-zA-Z0-9-_:\(\)\/\s;]+"/g);
+		elem = elem.match(/(\s+[a-zA-Z0-9-]+="[a-zA-Z0-9-_:\(\)\/\s;]+")|(\s+[a-zA-Z0-9-]+)/g);
 		if (elem) {
 			elem = elem.map((e) => e.trim());
 		}
@@ -267,7 +267,7 @@ class ElementCollection extends Array {
 		// set properties to newNode
 		if (elem) {
 			elem.forEach((e) => {
-				let [name, value] = e.replace(/\"/g, "").split("=");
+				let [name, value = ''] = e.replace(/\"/g, "").split("=");
 				newNode.setAttribute(name, value);
 			});
 		}
