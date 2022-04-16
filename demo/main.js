@@ -19,4 +19,5 @@ $(document).ready(() => {
 			});
 	};
 	$(document).on("click", 'button:not([data-clicked=true])', ex);
+	$('body').toggleClass('class-test');
 });

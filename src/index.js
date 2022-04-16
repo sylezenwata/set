@@ -133,6 +133,17 @@ class ElementCollection extends Array {
 	}
 
 	/**
+	 * function to toggle class list
+	 * @param {String} className 
+	 * @param {Boolean|Undefined} force 
+	 * @returns {Array}
+	 */
+	toggleClass(className, force) {
+		this.forEach(e => e.classList.toggle(className, force));
+		return this;
+	}
+
+	/**
 	 * function to remove a class from element
 	 * @param {String} className
 	 * @returns {Array}
