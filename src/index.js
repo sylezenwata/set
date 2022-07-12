@@ -148,8 +148,8 @@ class ElementCollection extends Array {
 	 * @param {String} className
 	 * @returns {Array}
 	 */
-	removeClass(className) {
-		this.forEach((e) => e.classList.remove(className));
+	removeClass(...classNames) {
+		this.forEach((e) => e.classList.remove(...classNames));
 		return this;
 	}
 
@@ -158,8 +158,8 @@ class ElementCollection extends Array {
 	 * @param {String} className
 	 * @returns {Array}
 	 */
-	addClass(className) {
-		this.forEach((e) => e.classList.add(className));
+	addClass(...classNames) {
+		this.forEach((e) => e.classList.add(...classNames));
 		return this;
 	}
 
