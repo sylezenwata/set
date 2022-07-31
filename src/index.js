@@ -230,7 +230,7 @@ class ElementCollection extends Array {
 	 * @returns {Array}
 	 */
 	html(data) {
-		if (data === null) {
+		if (!data) {
 			return this.map((e) => e.innerHTML).filter((e) => e != null);
 		}
 		this.forEach((e) => (e.innerHTML = data));
@@ -243,7 +243,7 @@ class ElementCollection extends Array {
 	 * @returns {Array}
 	 */
 	text(data) {
-		if (data === null) {
+		if (!data) {
 			return this.map((e) => e.textContent).filter((e) => e != null);
 		}
 		this.forEach((e) => (e.textContent = data));
