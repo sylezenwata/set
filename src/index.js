@@ -206,7 +206,7 @@ class ElementCollection extends Array {
 			const {
 				groups: { dataname },
 			} = /^(data)?(-)?(?<dataname>.+)$/.exec(name);
-			name = name
+			name = dataname
 				.split("-")
 				.map((e, i) => (i > 0 ? e.slice(0, 1).toUpperCase() + e.slice(1) : e))
 				.join("");
@@ -230,7 +230,7 @@ class ElementCollection extends Array {
 	 * @returns {Array}
 	 */
 	html(data) {
-		if (!data) {
+		if (!data && typeof data !== "string") {
 			return this.map((e) => e.innerHTML).filter((e) => e != null);
 		}
 		this.forEach((e) => (e.innerHTML = data));
@@ -243,7 +243,7 @@ class ElementCollection extends Array {
 	 * @returns {Array}
 	 */
 	text(data) {
-		if (!data) {
+		if (!data && typeof data !== "string") {
 			return this.map((e) => e.textContent).filter((e) => e != null);
 		}
 		this.forEach((e) => (e.textContent = data));
