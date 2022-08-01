@@ -94,7 +94,9 @@ class ElementCollection extends Array {
 			return this.map((e) => {
 				if (
 					document.querySelector(selector) &&
-					document.querySelector(selector).querySelector(e.nodeName)
+					[...document.querySelectorAll(selector)].some((e) =>
+						e.querySelector(e.nodeName)
+					)
 				) {
 					let parent = e.parentElement;
 					while (!parent.matches(selector)) {
@@ -134,12 +136,12 @@ class ElementCollection extends Array {
 
 	/**
 	 * function to toggle class list
-	 * @param {String} className 
-	 * @param {Boolean|Undefined} force 
+	 * @param {String} className
+	 * @param {Boolean|Undefined} force
 	 * @returns {Array}
 	 */
 	toggleClass(className, force) {
-		this.forEach(e => e.classList.toggle(className, force));
+		this.forEach((e) => e.classList.toggle(className, force));
 		return this;
 	}
 
@@ -264,7 +266,9 @@ class ElementCollection extends Array {
 
 		// get tag name
 		let elemTag = elem.split(" ")[0];
-		elem = elem.match(/(\s+[a-zA-Z0-9-]+="[a-zA-Z0-9-_:\(\)\/\s;]+")|(\s+[a-zA-Z0-9-]+)/g);
+		elem = elem.match(
+			/(\s+[a-zA-Z0-9-]+="[a-zA-Z0-9-_:\(\)\/\s;]+")|(\s+[a-zA-Z0-9-]+)/g
+		);
 		if (elem) {
 			elem = elem.map((e) => e.trim());
 		}
@@ -278,7 +282,7 @@ class ElementCollection extends Array {
 		// set properties to newNode
 		if (elem) {
 			elem.forEach((e) => {
-				let [name, value = ''] = e.replace(/\"/g, "").split("=");
+				let [name, value = ""] = e.replace(/\"/g, "").split("=");
 				newNode.setAttribute(name, value);
 			});
 		}
