@@ -521,6 +521,7 @@ set.ajax = function ({
 				reject({
 					code: status,
 					message: statusText,
+					...(response && { response }),
 				});
 			}
 		};
