@@ -92,12 +92,7 @@ class ElementCollection extends Array {
 	parent(selector) {
 		if (selector) {
 			return this.map((e) => {
-				if (
-					document.querySelector(selector) &&
-					[...document.querySelectorAll(selector)].some((e) =>
-						e.querySelector(e.nodeName)
-					)
-				) {
+				if (document.querySelector(selector)) {
 					let parent = e.parentElement;
 					while (!parent.matches(selector)) {
 						parent = parent.parentElement;
