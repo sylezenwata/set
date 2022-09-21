@@ -1,24 +1,28 @@
-// import set from "../src/index.js";
+import set from "../src/index.js";
 
 set(document).ready(() => {
 	set("body").prepend(`<button>Load data</button>`);
-	let ex = () => {
-		set("[data-test]").html("Fetching data...");
+	const req = () => {
+		set("[data-test]").text("Fetching data...");
 		set
 			.ajax({
-				url: "https://jsonplaceholder.typicode.com/todos",
+				url: "https://jsonplaceholder.typicode.com/todos/2",
 				method: "GET",
 				headers: {
 					Accept: false,
 				},
-				// responseType: 'json'
+				responseType: "json",
+				withCredentials: false,
 			})
-			.then((res) => set("[data-test]").text(res))
-			.catch((e) => console.log(e))
-			.finally(() => {
+			.then((res) => {
 				set("button").data("clicked", true);
+				console.log(res);
+				set("[data-test]").text(JSON.stringify(res));
+			})
+			.catch((err) => {
+				console.log(err);
+				set("[data-test]").text(err.response?.message || err.message || "An error occurred");
 			});
 	};
-	set(document).on("click", "button:not([data-clicked=true])", ex);
-	set("body").toggleClass("class-test");
+	set(document).on("click", "button:not([data-clicked=true])", req);
 });
