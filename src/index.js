@@ -541,4 +541,4 @@ set.ajax = function ({
 	});
 };
 
-export { set };
+export default set;

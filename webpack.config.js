@@ -4,13 +4,23 @@ module.exports = {
     output: {
         path: `${__dirname}/dist`,
         filename: 'set.min.js',
-        library: {
-            name: 'set',
-            type: 'umd',
-        },
-        // auxiliaryComment: 'Test Comment',
-        environment: {
-			arrowFunction: false
-		},
-    },
+        library: "set",
+		libraryTarget: "umd",
+		umdNamedDefine: true,
+		libraryExport: "default",
+	},
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				exclude: /(node_modules|bower_components)/,
+				use: {
+					loader: "babel-loader",
+					options: {
+						presets: ["@babel/preset-env"],
+					},
+				},
+			},
+		],
+	},
 };
