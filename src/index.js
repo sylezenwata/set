@@ -46,7 +46,11 @@ class ElementCollection extends Array {
 				elem.addEventListener(
 					event,
 					(e) => {
-						if (e.target.matches(cbOrSelector)) cb(e);
+						if (
+							e.currentTarget.matches(cbOrSelector) ||
+							e.target.matches(cbOrSelector)
+						)
+							cb(e);
 					},
 					option
 				);
